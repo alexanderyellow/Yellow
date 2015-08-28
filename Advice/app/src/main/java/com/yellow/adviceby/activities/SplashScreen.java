@@ -1,9 +1,11 @@
-package com.yellow.adviceby;
+package com.yellow.adviceby.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+
+import com.yellow.adviceby.R;
 
 public class SplashScreen extends AppCompatActivity {
 
@@ -28,7 +30,6 @@ public class SplashScreen extends AppCompatActivity {
                 finish();
             }
         }, SPLASH_TIME_OUT);
-
     }
 
 }

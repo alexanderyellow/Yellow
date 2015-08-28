@@ -1,9 +1,11 @@
-package com.yellow.adviceby;
+package com.yellow.adviceby.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.yellow.adviceby.R;
 
 public class MainActivity extends AppCompatActivity {
 

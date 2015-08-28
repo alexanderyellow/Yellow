@@ -1,5 +1,5 @@
 <resources>
-    <string name="title_activity_login_activity_test">Sign in</string>
+    <string name="title_activity_login">Sign in</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
@@ -12,4 +12,6 @@
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
+    <string name="plus_sign_in">Sign In with Google</string>
+    <string name="facebook_sign_in">Sign In with Facebook</string>
 </resources>

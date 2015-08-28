@@ -1,4 +1,4 @@
-package com.yellow.adviceby;
+package com.yellow.adviceby.activities;
 
 import android.content.Intent;
 import android.content.IntentSender;
@@ -8,18 +8,21 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookSdk;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.Scopes;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
-import com.google.android.gms.plus.model.people.Person;
+import com.yellow.adviceby.R;
 
 public class LoginActivity extends AppCompatActivity implements
         ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
@@ -36,36 +39,44 @@ public class LoginActivity extends AppCompatActivity implements
     /* Should we automatically resolve ConnectionResults when possible? */
     private boolean mShouldResolve = false;
 
+    CallbackManager callbackManager;
+
     /* A flag indicating that a PendingIntent is in progress and prevents
      * us from starting further intents.
      */
     private boolean mIntentInProgress;
-    private SignInButton signInButton;
+    private Button signInGoogleButton;
+    private Button signInFacebookButton;
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_login);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(Plus.API)
-                .addScope(new Scope(Scopes.PROFILE))
+                .addScope(new Scope(Scopes.PLUS_LOGIN))
                 .build();
 
-        if (supportsGooglePlayServices()) {
-            signInButton = (SignInButton) findViewById(R.id.plus_sign_in_button);
-            signInButton.setOnClickListener(this);
-        } else {
-            Log.d("g+_connection_error", "Device doesn't support Google Play Services");
-        }
+
 
         // Set up the login form.
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
-        mPasswordView = (EditText) findViewById(R.id.password);
+     //   mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+     //   mPasswordView = (EditText) findViewById(R.id.password);
+
+
+    //    callbackManager = CallbackManager.Factory.create();
+
+        signInGoogleButton = (Button) findViewById(R.id.plus_sign_in_button);
+        signInFacebookButton = (Button) findViewById(R.id.facebook_sign_in_button);
+     //   init();
+        signInGoogleButton.setOnClickListener(this);
+
     }
 
     @Override
@@ -79,8 +90,8 @@ public class LoginActivity extends AppCompatActivity implements
         super.onStop();
 
         if (mGoogleApiClient.isConnected()) {
-            Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
-            Plus.AccountApi.revokeAccessAndDisconnect(mGoogleApiClient);
+            //      Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
+            //      Plus.AccountApi.revokeAccessAndDisconnect(mGoogleApiClient);
             mGoogleApiClient.disconnect();
         }
     }
@@ -102,12 +113,6 @@ public class LoginActivity extends AppCompatActivity implements
         // attempt to resolve any errors that occur.
         mShouldResolve = true;
         mGoogleApiClient.connect();
-
-        //    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-        //    startActivity(intent);
-
-        // Show a message to the user that we are signing in.
-        // mStatusTextView.setText(R.string.signing_in);
     }
 
     @Override
@@ -122,7 +127,9 @@ public class LoginActivity extends AppCompatActivity implements
             }
 
             mIsResolving = false;
-            mGoogleApiClient.connect();
+            if (!mGoogleApiClient.isConnecting()) {
+                mGoogleApiClient.connect();
+            }
         }
     }
 
@@ -134,17 +141,16 @@ public class LoginActivity extends AppCompatActivity implements
         Log.d("g+_connection_info", "onConnected:" + bundle);
         mShouldResolve = false;
 
-        // Show the signed-in UI
-        //showSignedInUI();
-        //    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-        //    startActivity(intent);
-
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(intent);
+/*
         if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
             Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
             Log.d("g+_connection_info", currentPerson.getDisplayName());
             Log.d("g+_connection_info", currentPerson.getImage().getUrl());
             Log.d("g+_connection_info", currentPerson.getUrl());
         }
+        */
     }
 
     @Override
@@ -153,6 +159,8 @@ public class LoginActivity extends AppCompatActivity implements
         Log.d("g+_connection_error", "onConnectionFailed:" + connectionResult);
 
         if (!mIsResolving && mShouldResolve) {
+            Toast.makeText(getApplicationContext(), GooglePlayServicesUtil.getErrorString(connectionResult.getErrorCode()),
+                    Toast.LENGTH_LONG).show();
             if (connectionResult.hasResolution()) {
                 try {
                     connectionResult.startResolutionForResult(this, RC_SIGN_IN);
@@ -166,11 +174,9 @@ public class LoginActivity extends AppCompatActivity implements
                 // Could not resolve the connection result, show the user an
                 // error dialog.
                 Log.d("g+_connection_error", "onConnectionFailed:" + connectionResult);
-                //showErrorDialog(connectionResult);
+                Toast.makeText(getApplicationContext(), GooglePlayServicesUtil.getErrorString(connectionResult.getErrorCode()),
+                        Toast.LENGTH_LONG).show();
             }
-        } else {
-            // Show the signed-out UI
-            Log.d("g+_connection_info", "onConnectionFailed:" + connectionResult);
         }
     }
 
@@ -190,6 +196,19 @@ public class LoginActivity extends AppCompatActivity implements
         return GooglePlayServicesUtil.isGooglePlayServicesAvailable(this) ==
                 ConnectionResult.SUCCESS;
     }
+/*
+    private void init() {
 
+        for (int i = 0; i < signInGoogleButton.getChildCount(); i++) {
+            View v = signInGoogleButton.getChildAt(i);
+
+            if (v instanceof TextView) {
+                TextView tv = (TextView) v;
+                tv.setText(R.string.facebook_sign_in);
+                return;
+            }
+        }
+    }
+*/
 }
 
