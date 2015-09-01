@@ -7,13 +7,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.facebook.CallbackManager;
-import com.facebook.FacebookSdk;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.Scopes;
@@ -23,6 +21,7 @@ import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListe
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
 import com.yellow.adviceby.R;
+import com.yellow.adviceby.activities.login.FacebookLoginActivity;
 
 public class LoginActivity extends AppCompatActivity implements
         ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {
@@ -47,13 +46,11 @@ public class LoginActivity extends AppCompatActivity implements
     private boolean mIntentInProgress;
     private Button signInGoogleButton;
     private Button signInFacebookButton;
-    private AutoCompleteTextView mEmailView;
-    private EditText mPasswordView;
+    private LinearLayout signInButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_login);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -66,16 +63,20 @@ public class LoginActivity extends AppCompatActivity implements
 
 
         // Set up the login form.
-     //   mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
-     //   mPasswordView = (EditText) findViewById(R.id.password);
+        //   mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+        //   mPasswordView = (EditText) findViewById(R.id.password);
 
 
-    //    callbackManager = CallbackManager.Factory.create();
+        //    callbackManager = CallbackManager.Factory.create();
 
         signInGoogleButton = (Button) findViewById(R.id.plus_sign_in_button);
         signInFacebookButton = (Button) findViewById(R.id.facebook_sign_in_button);
-     //   init();
+        //   init();
         signInGoogleButton.setOnClickListener(this);
+        signInFacebookButton.setOnClickListener(this);
+
+        signInButton = (LinearLayout) findViewById(R.id.sign_in_btn);
+        signInButton.setOnClickListener(this);
 
     }
 
@@ -105,6 +106,14 @@ public class LoginActivity extends AppCompatActivity implements
             case R.id.plus_sign_in_button:
                 onSignInClicked();
                 break;
+            case R.id.sign_in_btn:
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.facebook_sign_in_button:
+                startActivityForResult(new Intent(LoginActivity.this, FacebookLoginActivity.class), 1);
+                break;
+
         }
     }
 
@@ -196,19 +205,5 @@ public class LoginActivity extends AppCompatActivity implements
         return GooglePlayServicesUtil.isGooglePlayServicesAvailable(this) ==
                 ConnectionResult.SUCCESS;
     }
-/*
-    private void init() {
 
-        for (int i = 0; i < signInGoogleButton.getChildCount(); i++) {
-            View v = signInGoogleButton.getChildAt(i);
-
-            if (v instanceof TextView) {
-                TextView tv = (TextView) v;
-                tv.setText(R.string.facebook_sign_in);
-                return;
-            }
-        }
-    }
-*/
 }
-
