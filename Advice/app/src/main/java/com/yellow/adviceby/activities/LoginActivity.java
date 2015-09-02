@@ -43,10 +43,10 @@ public class LoginActivity extends AppCompatActivity implements
     /* A flag indicating that a PendingIntent is in progress and prevents
      * us from starting further intents.
      */
-    private boolean mIntentInProgress;
     private Button signInGoogleButton;
     private Button signInFacebookButton;
     private LinearLayout signInButton;
+    private LinearLayout getStartedButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,23 +60,15 @@ public class LoginActivity extends AppCompatActivity implements
                 .addScope(new Scope(Scopes.PLUS_LOGIN))
                 .build();
 
-
-
-        // Set up the login form.
-        //   mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
-        //   mPasswordView = (EditText) findViewById(R.id.password);
-
-
-        //    callbackManager = CallbackManager.Factory.create();
-
         signInGoogleButton = (Button) findViewById(R.id.plus_sign_in_button);
         signInFacebookButton = (Button) findViewById(R.id.facebook_sign_in_button);
-        //   init();
+        signInButton = (LinearLayout) findViewById(R.id.sign_in_btn);
+        getStartedButton = (LinearLayout) findViewById(R.id.get_started_btn);
+
         signInGoogleButton.setOnClickListener(this);
         signInFacebookButton.setOnClickListener(this);
-
-        signInButton = (LinearLayout) findViewById(R.id.sign_in_btn);
         signInButton.setOnClickListener(this);
+        getStartedButton.setOnClickListener(this);
 
     }
 
@@ -106,14 +98,17 @@ public class LoginActivity extends AppCompatActivity implements
             case R.id.plus_sign_in_button:
                 onSignInClicked();
                 break;
-            case R.id.sign_in_btn:
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
-                break;
             case R.id.facebook_sign_in_button:
                 startActivityForResult(new Intent(LoginActivity.this, FacebookLoginActivity.class), 1);
                 break;
-
+            case R.id.sign_in_btn:
+                Intent intent1 = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent1);
+                break;
+            case R.id.get_started_btn:
+                Intent intent2 = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent2);
+                break;
         }
     }
 
