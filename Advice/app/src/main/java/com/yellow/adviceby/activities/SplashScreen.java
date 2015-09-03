@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 
 import com.yellow.adviceby.R;
+import com.yellow.adviceby.activities.login.LoginActivity;
 
 public class SplashScreen extends AppCompatActivity {
 

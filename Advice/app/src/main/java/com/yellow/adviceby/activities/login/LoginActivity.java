@@ -1,4 +1,4 @@
-package com.yellow.adviceby.activities;
+package com.yellow.adviceby.activities.login;
 
 import android.content.Intent;
 import android.content.IntentSender;
@@ -21,7 +21,7 @@ import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListe
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
 import com.yellow.adviceby.R;
-import com.yellow.adviceby.activities.login.FacebookLoginActivity;
+import com.yellow.adviceby.activities.MainActivity;
 
 public class LoginActivity extends AppCompatActivity implements
         ConnectionCallbacks, OnConnectionFailedListener, OnClickListener {

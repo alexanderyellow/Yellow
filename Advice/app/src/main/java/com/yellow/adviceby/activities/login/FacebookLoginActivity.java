@@ -19,7 +19,6 @@ import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.yellow.adviceby.R;
-import com.yellow.adviceby.activities.LoginActivity;
 import com.yellow.adviceby.activities.MainActivity;
 
 import java.util.Arrays;
