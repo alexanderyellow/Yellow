@@ -3,4 +3,5 @@
     <color name="gsignin_button">#DF4B34</color>
     <color name="fsignin_button">#4B6FA9</color>
     <color name="signin_custom_button">#64627073</color>
+    <color name="toolbar">#64ff9c0d</color>
 </resources>

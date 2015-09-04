@@ -1,7 +1,6 @@
 package com.yellow.adviceby.activities;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -55,7 +54,8 @@ public class MainActivity extends AppCompatActivity {
                 R.layout.drawer_list_item, mItemTitles));
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
-        initActionBar();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
 
         // ActionBarDrawerToggle ties together the the proper interactions
         // between the sliding drawer and the action bar app icon
@@ -109,8 +109,9 @@ public class MainActivity extends AppCompatActivity {
         }
         // Handle action buttons
         switch(item.getItemId()) {
+            //// TODO: 04.09.2015 change logic
             case R.id.action_settings:
-                // create intent to perform web search for this planet
+                // create intent to perform web search for this item
                 Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
                 intent.putExtra(SearchManager.QUERY, getSupportActionBar().getTitle());
                 // catch event that there's no activity to handle intent
@@ -137,11 +138,11 @@ public class MainActivity extends AppCompatActivity {
         // update the main content by replacing fragments
         Fragment fragment = new ItemFragment();
         Bundle args = new Bundle();
-        args.putInt(ItemFragment.ARG_PLANET_NUMBER, position);
+        args.putInt(ItemFragment.ARG_ITEM_NUMBER, position);
         fragment.setArguments(args);
 
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+    //    FragmentManager fragmentManager = getFragmentManager();
+    //    fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
 
         // update selected item and title, then close the drawer
         mDrawerList.setItemChecked(position, true);
@@ -175,10 +176,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Fragment that appears in the "content_frame", shows a planet
+     * Fragment that appears in the "content_frame", shows an item
      */
     public static class ItemFragment extends Fragment {
-        public static final String ARG_PLANET_NUMBER = "planet_number";
+        public static final String ARG_ITEM_NUMBER = "item_number";
 
         public ItemFragment() {
             // Empty constructor required for fragment subclasses
@@ -188,20 +189,15 @@ public class MainActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_item, container, false);
-            int i = getArguments().getInt(ARG_PLANET_NUMBER);
-            String planet = getResources().getStringArray(R.array.nav_drawer_items)[i];
+            int i = getArguments().getInt(ARG_ITEM_NUMBER);
+            String item = getResources().getStringArray(R.array.nav_drawer_items)[i];
 
-            int imageId = getResources().getIdentifier(planet.toLowerCase(Locale.getDefault()),
+            int imageId = getResources().getIdentifier(item.toLowerCase(Locale.getDefault()),
                     "drawable", getActivity().getPackageName());
             ((ImageView) rootView.findViewById(R.id.image)).setImageResource(imageId);
-            getActivity().setTitle(planet);
+            getActivity().setTitle(item);
             return rootView;
         }
     }
 
-    private void initActionBar() {
-        // enable ActionBar app icon to behave as action to toggle nav drawer
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-    }
 }

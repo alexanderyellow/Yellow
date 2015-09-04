@@ -21,6 +21,7 @@ import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListe
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
 import com.yellow.adviceby.R;
+import com.yellow.adviceby.activities.AdviceActivity;
 import com.yellow.adviceby.activities.MainActivity;
 
 public class LoginActivity extends AppCompatActivity implements
@@ -102,7 +103,7 @@ public class LoginActivity extends AppCompatActivity implements
                 startActivityForResult(new Intent(LoginActivity.this, FacebookLoginActivity.class), 1);
                 break;
             case R.id.sign_in_btn:
-                Intent intent1 = new Intent(LoginActivity.this, MainActivity.class);
+                Intent intent1 = new Intent(LoginActivity.this, AdviceActivity.class);
                 startActivity(intent1);
                 break;
             case R.id.get_started_btn:
