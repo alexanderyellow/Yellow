@@ -10,7 +10,18 @@
         android:id="@+id/content_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/minions"/>
+        android:background="@drawable/minion_background_main3">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <include
+                android:id="@+id/tool_bar"
+                layout="@layout/toolbar"/>
+
+        </RelativeLayout>
+    </FrameLayout>
     <!-- The navigation drawer -->
     <ListView
         android:id="@+id/left_drawer"

@@ -2,6 +2,7 @@
     android:id="@+id/image"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/minions"
+    android:background="@drawable/minion_background_main"
     android:gravity="center"
+    android:scaleType="centerCrop"
     android:padding="32dp" />
