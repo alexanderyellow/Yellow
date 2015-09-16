@@ -19,7 +19,7 @@ import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.yellow.adviceby.R;
-import com.yellow.adviceby.activities.MainActivity;
+import com.yellow.adviceby.activities.AdviceActivity;
 
 import java.util.Arrays;
 
@@ -44,7 +44,7 @@ public class FacebookLoginActivity extends FragmentActivity {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
                         Log.d("f+_connection_info", "onSuccess:");
-                        Intent intent = new Intent(FacebookLoginActivity.this, MainActivity.class);
+                        Intent intent = new Intent(FacebookLoginActivity.this, AdviceActivity.class);
                         startActivity(intent);
                     }
 
