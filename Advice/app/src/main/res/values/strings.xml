@@ -8,4 +8,5 @@
     <string name="title_activity_advice">AdviceActivity</string>
     <string name="title_activity_alternative_main">AlternativeMainActivity</string>
     <string name="title_activity_create_account">CreateAccountActivity</string>
+    <string name="title_activity_login_dialog">LoginDialog</string>
 </resources>

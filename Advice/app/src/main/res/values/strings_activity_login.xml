@@ -12,4 +12,6 @@
     <string name="hello_user">Hello %1$s!</string>
     <string name="success">Success</string>
     <string name="successfully_posted_post">Post ID: %1$s</string>
+    <string name="signin">Sign in</string>
+    <string name="cancel">Cancel</string>
 </resources>

@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.yellow.adviceby.R;
-import com.yellow.adviceby.activities.AdviceActivity;
 import com.yellow.adviceby.activities.CreateAccountActivity;
 
 public class LoginActivity extends AppCompatActivity implements OnClickListener {
@@ -62,8 +61,12 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
                 startActivityForResult(new Intent(LoginActivity.this, FacebookLoginActivity.class), 2);
                 break;
             case R.id.sign_in_btn:
-                Intent intent1 = new Intent(LoginActivity.this, AdviceActivity.class);
-                startActivity(intent1);
+                LoginDialog loginDialog = new LoginDialog(LoginActivity.this);
+                loginDialog.show();
+            //    DialogFragment newFragment = new LoginDialogFragment();
+            //    newFragment.show(getSupportFragmentManager(), "signin");
+            //    Intent intent1 = new Intent(LoginActivity.this, AdviceActivity.class);
+            //    startActivity(intent1);
                 break;
             case R.id.get_started_btn:
                 Intent intent2 = new Intent(LoginActivity.this, CreateAccountActivity.class);

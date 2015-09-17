@@ -8,4 +8,8 @@
     <style name="NoActionBarTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
+
+    <style name="CustomDialog" parent="Base.Theme.AppCompat.Dialog.Alert">
+
+        </style>
 </resources>

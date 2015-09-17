@@ -39,19 +39,19 @@
             android:textColor="@android:color/white"
             android:textSize="16sp" />
 
-                <Button
-                    android:id="@+id/facebook_sign_in_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:alpha="0.70"
-                    android:background="@drawable/facebook_button"
-                    android:drawableLeft="@drawable/facebook_icon"
-                    android:paddingLeft="2dp"
-                    android:text="@string/facebook_sign_in"
-                    android:textAllCaps="false"
-                    android:textColor="@android:color/white"
-                    android:textSize="16sp" />
+        <Button
+            android:id="@+id/facebook_sign_in_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:alpha="0.70"
+            android:background="@drawable/facebook_button"
+            android:drawableLeft="@drawable/facebook_icon"
+            android:paddingLeft="2dp"
+            android:text="@string/facebook_sign_in"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
 
     </LinearLayout>
 
@@ -107,9 +107,9 @@
                         android:layout_height="wrap_content"
                         android:text="Create Account"
                         android:textAllCaps="false"
+                        android:textColor="@android:color/darker_gray"
                         android:textSize="14sp"
-                        android:textStyle="normal"
-                        android:textColor="@android:color/darker_gray"/>
+                        android:textStyle="normal" />
 
                 </LinearLayout>
 
@@ -152,9 +152,9 @@
                         android:layout_height="wrap_content"
                         android:text="Existing Account"
                         android:textAllCaps="false"
+                        android:textColor="@android:color/darker_gray"
                         android:textSize="14sp"
-                        android:textStyle="normal"
-                        android:textColor="@android:color/darker_gray"/>
+                        android:textStyle="normal" />
 
                 </LinearLayout>
 
