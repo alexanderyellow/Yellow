@@ -34,7 +34,4 @@ public class LoginDialog extends AppCompatDialog implements View.OnClickListener
         dismiss();
     }
 
-    public void show() {
-        super.show();
-    }
 }

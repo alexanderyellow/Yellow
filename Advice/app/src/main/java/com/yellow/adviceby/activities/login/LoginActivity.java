@@ -69,10 +69,29 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
             //    startActivity(intent1);
                 break;
             case R.id.get_started_btn:
+
+                /**
+                 * Choose account
+                 */
+            //    Intent intent = AccountPicker.newChooseAccountIntent(null, null, new String[]{"com.google"},
+            //            false, null, null, null, null);
+                //startActivityForResult(intent, 3);
+            //    startActivity(intent);
+
                 Intent intent2 = new Intent(LoginActivity.this, CreateAccountActivity.class);
                 startActivity(intent2);
                 break;
         }
     }
+
+    /*  Return results
+    protected void onActivityResult(final int requestCode, final int resultCode,
+                                    final Intent data) {
+        if (requestCode == 3 && resultCode == RESULT_OK) {
+            String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+            Log.i("Lalalala", accountName);
+        }
+    }
+    */
 
 }

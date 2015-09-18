@@ -6,5 +6,5 @@
     <color name="toolbar">#ffe67f</color>
     <color name="header">#a6000000</color>
     <color name="navigation_background">#a4ffd339</color>
-    <color name="dialog">#a4ffd339</color>
+    <color name="dialog">#ffd339</color>
 </resources>

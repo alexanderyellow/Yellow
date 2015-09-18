@@ -6,6 +6,7 @@ import android.content.IntentSender;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
@@ -19,7 +20,7 @@ public class GoogleLoginActivity extends FragmentActivity
 
     private GoogleApiClient mGoogleApiClient;
 
-    private static final String TAG = "signin1";
+    private static final String TAG = "signin";
 
     private static final int STATE_SIGNED_IN = 0;
     private static final int STATE_SIGN_IN = 1;
@@ -31,20 +32,31 @@ public class GoogleLoginActivity extends FragmentActivity
 
     private static final int RC_SIGN_IN = 0;
 
+ //   private ProgressDialog pd;
+
     private static final int DIALOG_PLAY_SERVICES_ERROR = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(Plus.API, Plus.PlusOptions.builder().build())
+        //        .setAccountName("alexandryellow@gmail.com")
                 .addScope(new Scope(Scopes.PLUS_LOGIN))
                 .build();
+
         mSignInProgress = STATE_SIGN_IN;
+/*
+        pd = new ProgressDialog(getApplicationContext());
+        pd.setTitle("Processing...");
+        pd.setMessage("Please wait.");
+        pd.setCancelable(false);
+        pd.setIndeterminate(true);  */
     }
+
+
 
     @Override
     protected void onStart() {
@@ -62,6 +74,7 @@ public class GoogleLoginActivity extends FragmentActivity
 
     @Override
     public void onConnectionSuspended(int cause) {
+        Log.i(TAG, "onConnectionSuspended");
         // The connection to Google Play services was lost for some reason.
         // We call connect() to attempt to re-establish the connection or get a
         // ConnectionResult that we can attempt to resolve.
@@ -108,6 +121,7 @@ public class GoogleLoginActivity extends FragmentActivity
     private void resolveSignInError() {
         Log.i(TAG, "onConnectionFailed: ConnectionResult.resolveSignInError()");
         if (mSignInIntent != null) {
+            Log.i(TAG, "onConnectionFailed: ConnectionResult.resolveSignInError.if()");
             // We have an intent which will allow our user to sign in or
             // resolve an error.  For example if the user needs to
             // select an account to sign in with, or if they need to consent
@@ -134,30 +148,36 @@ public class GoogleLoginActivity extends FragmentActivity
             // error types, so we show the default Google Play services error
             // dialog which may still start an intent on our behalf if the
             // user can resolve the issue.
-            showDialog(DIALOG_PLAY_SERVICES_ERROR);
+            Toast.makeText(getApplicationContext(), "Connection failed", Toast.LENGTH_SHORT).show();
+            startActivityForResult(new Intent(getApplicationContext(), LoginActivity.class), 1);
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode,
                                     Intent data) {
+        Log.i(TAG, "onActivityResult");
         switch (requestCode) {
             case RC_SIGN_IN:
                 if (resultCode == RESULT_OK) {
+                    Log.i(TAG, "onActivityResult.RESULT_OK");
                     // If the error resolution was successful we should continue
                     // processing errors.
                     mSignInProgress = STATE_SIGN_IN;
                 } else {
+                    Log.i(TAG, "onActivityResult.RESULT_NOT_OK");
                     // If the error resolution was not successful or the user canceled,
                     // we should stop processing errors.
                     mSignInProgress = STATE_SIGNED_IN;
                 }
 
                 if (!mGoogleApiClient.isConnecting()) {
+                    Log.i(TAG, "onActivityResult.isn'tConnected");
                     // If Google Play services resolved the issue with a dialog then
                     // onStart is not called so we need to re-attempt connection here.
                     mGoogleApiClient.connect();
                 }
+
                 break;
         }
     }
