@@ -1,5 +1,6 @@
 package com.yellow.adviceby.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.yellow.adviceby.R;
+import com.yellow.adviceby.activities.logout.GoogleLogoutActivity;
 
 public class AdviceActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -85,6 +87,7 @@ public class AdviceActivity extends AppCompatActivity
                         return true;
                     case R.id.sign_out:
                         Toast.makeText(getApplicationContext(), R.string.drawer_ic_signout, Toast.LENGTH_SHORT).show();
+                        startActivityForResult(new Intent(AdviceActivity.this, GoogleLogoutActivity.class), 1);
                         return true;
                     default:
                         Toast.makeText(getApplicationContext(), "Somethings Wrong", Toast.LENGTH_SHORT).show();

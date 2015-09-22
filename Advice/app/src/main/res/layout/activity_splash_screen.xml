@@ -1,9 +1,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/splash_screen"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/splash_screen_background"
-    tools:context="com.yellow.adviceby.activities.SplashScreen">
+    tools:context="com.yellow.adviceby.activities.SplashScreenActivity">
 
     <ProgressBar
         android:id="@+id/progressBar"

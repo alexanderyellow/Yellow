@@ -10,12 +10,11 @@ import android.widget.LinearLayout;
 
 import com.yellow.adviceby.R;
 import com.yellow.adviceby.activities.CreateAccountActivity;
+import com.yellow.adviceby.db.DBUserHandler;
+import com.yellow.adviceby.model.User;
 
 public class LoginActivity extends AppCompatActivity implements OnClickListener {
 
-    /* A flag indicating that a PendingIntent is in progress and prevents
-     * us from starting further intents.
-     */
     private Button signInGoogleButton;
     private Button signInFacebookButton;
     private LinearLayout signInButton;
@@ -84,14 +83,13 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener 
         }
     }
 
-    /*  Return results
-    protected void onActivityResult(final int requestCode, final int resultCode,
-                                    final Intent data) {
-        if (requestCode == 3 && resultCode == RESULT_OK) {
-            String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-            Log.i("Lalalala", accountName);
+    private void dbUpdate(User user) {
+        DBUserHandler dbUserHandler = new DBUserHandler(this);
+        if(dbUserHandler.hasRecord()) {
+            dbUserHandler.update(user);
+        } else {
+            dbUserHandler.create(user);
         }
     }
-    */
 
 }

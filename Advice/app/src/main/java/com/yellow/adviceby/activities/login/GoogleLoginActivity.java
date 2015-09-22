@@ -14,6 +14,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
 import com.yellow.adviceby.activities.AdviceActivity;
+import com.yellow.adviceby.db.DBUserHandler;
+import com.yellow.adviceby.model.User;
 
 public class GoogleLoginActivity extends FragmentActivity
         implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -32,7 +34,8 @@ public class GoogleLoginActivity extends FragmentActivity
 
     private static final int RC_SIGN_IN = 0;
 
- //   private ProgressDialog pd;
+    private DBUserHandler dbUserHandler;
+    //   private ProgressDialog pd;
 
     private static final int DIALOG_PLAY_SERVICES_ERROR = 0;
 
@@ -43,11 +46,13 @@ public class GoogleLoginActivity extends FragmentActivity
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(Plus.API, Plus.PlusOptions.builder().build())
-        //        .setAccountName("alexandryellow@gmail.com")
+                        //        .setAccountName("alexandryellow@gmail.com")
                 .addScope(new Scope(Scopes.PLUS_LOGIN))
                 .build();
 
-        mSignInProgress = STATE_SIGN_IN;
+                mSignInProgress = STATE_SIGN_IN;
+
+        dbUserHandler = new DBUserHandler(this);
 /*
         pd = new ProgressDialog(getApplicationContext());
         pd.setTitle("Processing...");
@@ -55,8 +60,6 @@ public class GoogleLoginActivity extends FragmentActivity
         pd.setCancelable(false);
         pd.setIndeterminate(true);  */
     }
-
-
 
     @Override
     protected void onStart() {
@@ -89,7 +92,13 @@ public class GoogleLoginActivity extends FragmentActivity
         // Indicate that the sign in process is complete.
         mSignInProgress = STATE_SIGNED_IN;
         Intent intent = new Intent(GoogleLoginActivity.this, AdviceActivity.class);
+     /*   Bundle bundle = new Bundle();
+        bundle.putSerializable("b", (Serializable) mGoogleApiClient);
+        intent.putExtra("i", bundle); */
         startActivity(intent);
+
+        User user = new User(1, true, "g+");
+        dbUserHandler.create(user);
 
     }
 
