@@ -68,9 +68,6 @@
             android:label="@string/title_activity_advice"
             android:theme="@style/NoActionBarTheme"/>
         <activity
-            android:name=".activities.login.GoogleLoginActivity"
-            android:label="@string/title_activity_google_login"/>
-        <activity
             android:name=".activities.CreateAccountActivity"
             android:label="@string/title_activity_create_account"/>
         <activity android:name=".activities.logout.GoogleLogoutActivity"

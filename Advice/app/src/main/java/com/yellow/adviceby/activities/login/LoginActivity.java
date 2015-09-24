@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.yellow.adviceby.R;
-import com.yellow.adviceby.activities.AdviceActivity;
 import com.yellow.adviceby.activities.CreateAccountActivity;
 import com.yellow.adviceby.db.DBUserHandler;
 import com.yellow.adviceby.model.User;
@@ -26,7 +25,7 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
     private LinearLayout signInButton;
     private LinearLayout getStartedButton;
 
-    private GoogleConnection googleConnection;
+    private GoogleLoginActivity googleConnection;
     private ProgressDialog progress;
 
     @Override
@@ -34,22 +33,19 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
         if (observable != googleConnection) {
             return;
         }
-        switch ((State) data) {
-            case CREATED:
-        //        progress.dismiss();
-                onSignedOutUI();
+        switch ((StateA) data) {
+            case SIGN_IN:
                 break;
             case OPENING:
-        //        progress.show();
                 break;
-            case OPENED:
+            case SIGNED_IN:
         //        progress.dismiss();
-                Intent intent = new Intent(LoginActivity.this, AdviceActivity.class);
-                startActivity(intent);
+        //        Intent intent = new Intent(LoginActivity.this, AdviceActivity.class);
+        //        startActivity(intent);
 
                 // We are signed in!
                 // Retrieve some profile information to personalize our app for the user.
-                try {
+           /*     try {
                     String emailAddress = googleConnection.getAccountName();
                     Log.i("Lalalal", emailAddress);
 
@@ -57,11 +53,13 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
                     String exception = ex.getLocalizedMessage();
                     String exceptionString = ex.toString();
                 }
-                finish();
+                finish();  */
                 break;
             case CLOSED:
         //        progress.dismiss();
                 onSignedOutUI();
+                break;
+            case IN_PROGRESS:
                 break;
         }
     }
@@ -81,12 +79,13 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
         signInButton.setOnClickListener(this);
         getStartedButton.setOnClickListener(this);
 
-        googleConnection = GoogleConnection.getInstance(this);
+        googleConnection = GoogleLoginActivity.getInstance(this);
         googleConnection.addObserver(this);
-
+        googleConnection.revokeAccessAndDisconnect();
+/*
         progress = new ProgressDialog(this);
         progress.setTitle("Signing in");
-        progress.setMessage("Waiting...");
+        progress.setMessage("Waiting...");  */
     }
 
     @Override
@@ -111,7 +110,7 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
                 break;
             case R.id.facebook_sign_in_button:
         //        startActivityForResult(new Intent(LoginActivity.this, FacebookLoginActivity.class), 2);
-        //        googleConnection.disconnect();
+                googleConnection.revokeAccessAndDisconnect();
                 break;
             case R.id.sign_in_btn:
                 LoginDialog loginDialog = new LoginDialog(LoginActivity.this);
@@ -159,7 +158,7 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
         Log.i("LoginActivity", "onActivityResult");
         if (GoogleConnection.REQUEST_CODE == requestCode) {
             Log.i("LoginActivity", "onActivityResult.if");
-            googleConnection.onActivityResult(resultCode);
+            googleConnection.onActivityResult(resultCode, resultCode, data);
         }
     }
 
