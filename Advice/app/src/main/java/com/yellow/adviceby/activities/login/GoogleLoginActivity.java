@@ -13,6 +13,7 @@ import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
+import com.yellow.adviceby.R;
 import com.yellow.adviceby.activities.AdviceActivity;
 import com.yellow.adviceby.db.DBUserHandler;
 import com.yellow.adviceby.model.User;
@@ -42,6 +43,7 @@ public class GoogleLoginActivity extends FragmentActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.login);
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -71,6 +73,7 @@ public class GoogleLoginActivity extends FragmentActivity
     protected void onStop() {
         super.onStop();
         if (mGoogleApiClient.isConnected()) {
+            Log.i(TAG, "onStop");
             mGoogleApiClient.disconnect();
         }
     }
@@ -92,12 +95,10 @@ public class GoogleLoginActivity extends FragmentActivity
         // Indicate that the sign in process is complete.
         mSignInProgress = STATE_SIGNED_IN;
         Intent intent = new Intent(GoogleLoginActivity.this, AdviceActivity.class);
-     /*   Bundle bundle = new Bundle();
-        bundle.putSerializable("b", (Serializable) mGoogleApiClient);
-        intent.putExtra("i", bundle); */
         startActivity(intent);
 
-        User user = new User(1, true, "g+");
+        User user = new User(1, 1, "g+");
+        dbUserHandler.delete();
         dbUserHandler.create(user);
 
     }

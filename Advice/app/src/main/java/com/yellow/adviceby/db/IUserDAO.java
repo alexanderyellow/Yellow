@@ -9,5 +9,5 @@ public interface IUserDAO {
     public void create(User user);
     public User read();
     public void update(User user);
-    public void delete(User user);
+    public void delete();
 }

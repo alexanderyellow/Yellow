@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import com.yellow.adviceby.R;
 import com.yellow.adviceby.activities.login.LoginActivity;
@@ -24,7 +25,7 @@ public class SplashScreenActivity extends AppCompatActivity {
 
     }
 
-    private class ConnectionChecking extends AsyncTask<DBUserHandler, Integer, Boolean> {
+    private class ConnectionChecking extends AsyncTask<DBUserHandler, Integer, Integer> {
 
         @Override
         protected void onPreExecute() {
@@ -32,9 +33,11 @@ public class SplashScreenActivity extends AppCompatActivity {
         }
 
         @Override
-        protected Boolean doInBackground(DBUserHandler... dbUserHandlers) {
+        protected Integer doInBackground(DBUserHandler... dbUserHandlers) {
+        //    dbUserHandlers[0].delete();
             User user = dbUserHandlers[0].read();
-            return (user != null ? user.getIsConnected() : false);
+//            Log.i("doInBackground", String.valueOf(user.getIsConnected()));
+            return (user != null ? user.getIsConnected() : 0);
         }
 
         @Override
@@ -42,11 +45,12 @@ public class SplashScreenActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(Boolean result) {
+        protected void onPostExecute(Integer result) {
+            Log.i("onPostExecute", String.valueOf(result));
 
             Intent intent;
 
-            if(result) {
+            if(result.equals(1)) {
                 intent = new Intent(SplashScreenActivity.this, AdviceActivity.class);
                 startActivity(intent);
             } else {

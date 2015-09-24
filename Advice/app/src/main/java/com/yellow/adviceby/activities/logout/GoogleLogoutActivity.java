@@ -13,6 +13,7 @@ import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.plus.Plus;
 import com.yellow.adviceby.activities.login.LoginActivity;
+import com.yellow.adviceby.db.DBUserHandler;
 
 /**
  * Created by SheykinAV on 22.09.2015.
@@ -47,8 +48,9 @@ public class GoogleLogoutActivity extends FragmentActivity
     @Override
     protected void onStop() {
         super.onStop();
-        Log.i(TAG, "onStop");
+
         if (mGoogleApiClient.isConnected()) {
+            Log.i(TAG, "onStop");
             mGoogleApiClient.disconnect();
         }
     }
@@ -76,9 +78,9 @@ public class GoogleLogoutActivity extends FragmentActivity
                         mGoogleApiClient.disconnect();
                         Intent intent = new Intent(GoogleLogoutActivity.this, LoginActivity.class);
                         startActivity(intent);
+                        new DBUserHandler(getApplicationContext()).delete();
                     }
                 });
-
     }
 
     @Override

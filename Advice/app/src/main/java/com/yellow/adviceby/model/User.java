@@ -9,12 +9,12 @@ public class User {
     private String email;
     private String name;
     private String password;
-    private boolean isConnected;
+    private int isConnected;
     private String connectionSource;
 
     public User(){}
 
-    public User(int id, boolean isConnected, String connectionSource) {
+    public User(int id, int isConnected, String connectionSource) {
         this.id = id;
         this.isConnected = isConnected;
         this.connectionSource = connectionSource;
@@ -66,11 +66,11 @@ public class User {
         this.connectionSource = connectionSource;
     }
 
-    public boolean getIsConnected() {
+    public int getIsConnected() {
         return isConnected;
     }
 
-    public void setIsConnected(boolean isConnected) {
+    public void setIsConnected(int isConnected) {
         this.isConnected = isConnected;
     }
 }

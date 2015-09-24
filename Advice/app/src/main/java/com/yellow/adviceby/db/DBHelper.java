@@ -21,7 +21,7 @@ public class DBHelper extends SQLiteOpenHelper {
         public static final String SQL_CREATE_TABLE =
                 "CREATE TABLE " + TABLE_NAME + " ( " +
                         ID + " INTEGER PRIMARY KEY, " +
-                        IS_CONNECTED + " BOOLEAN, " +
+                        IS_CONNECTED + " INTEGER, " +
                         CONNECTION_SOURCE + " TEXT " +
                         " )";
         public static final String SQL_DELETE_TABLE =

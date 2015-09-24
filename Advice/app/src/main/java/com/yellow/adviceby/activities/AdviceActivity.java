@@ -7,19 +7,48 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 import com.yellow.adviceby.R;
-import com.yellow.adviceby.activities.logout.GoogleLogoutActivity;
+import com.yellow.adviceby.activities.login.GoogleConnection;
+import com.yellow.adviceby.activities.login.LoginActivity;
+import com.yellow.adviceby.activities.login.State;
+import com.yellow.adviceby.db.DBUserHandler;
+import com.yellow.adviceby.model.User;
+
+import java.util.Observable;
+import java.util.Observer;
 
 public class AdviceActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements Observer, NavigationView.OnNavigationItemSelectedListener {
 
     //First We Declare Titles And Icons For Our Navigation drawerLayout List View
     //This Icons And Titles Are holded in an Array as you can see
+    private GoogleConnection googleConnection;
+
+    @Override
+    public void update(Observable observable, Object data) {
+        if (observable != googleConnection) {
+            return;
+        }
+        switch ((State) data) {
+            case CREATED:
+                break;
+            case OPENING:
+                break;
+            case OPENED:
+                break;
+            case CLOSED:
+                Intent intent = new Intent(AdviceActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+                break;
+        }
+    }
 
     String TITLES[] = {"Home", "Sign out"};
     int ICONS[] = {R.drawable.ic_home,
@@ -49,9 +78,13 @@ public class AdviceActivity extends AppCompatActivity
     /* Assinging the toolbar object to the view
        and setting the the Action bar to our toolbar
      */
-
+        User user = new DBUserHandler(this).read();
+        Log.i("AdviceAct", String.valueOf(user != null ? user.getIsConnected() : null));
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
+
+        googleConnection = GoogleConnection.getInstance(this);
+        googleConnection.addObserver(this);
 
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
 
@@ -87,7 +120,9 @@ public class AdviceActivity extends AppCompatActivity
                         return true;
                     case R.id.sign_out:
                         Toast.makeText(getApplicationContext(), R.string.drawer_ic_signout, Toast.LENGTH_SHORT).show();
-                        startActivityForResult(new Intent(AdviceActivity.this, GoogleLogoutActivity.class), 1);
+                        googleConnection.revokeAccessAndDisconnect();
+                        //        startActivityForResult(new Intent(AdviceActivity.this, GoogleLogoutActivity.class), 1);
+
                         return true;
                     default:
                         Toast.makeText(getApplicationContext(), "Somethings Wrong", Toast.LENGTH_SHORT).show();
@@ -195,7 +230,18 @@ public class AdviceActivity extends AppCompatActivity
                 return true;
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        Log.i("AdviceActivity", "onDestroy");
+        super.onDestroy();
+        googleConnection.deleteObserver(this);
+        //    googleConnection.disconnect();
+    }
+
 }
+
+
 
 /*
     public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {

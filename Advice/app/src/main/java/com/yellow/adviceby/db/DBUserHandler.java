@@ -23,6 +23,7 @@ public class DBUserHandler extends DBHelper implements IUserDAO {
 
     /**
      * Add user
+     *
      * @param user user object
      */
     @Override
@@ -30,7 +31,7 @@ public class DBUserHandler extends DBHelper implements IUserDAO {
 
         ContentValues values = new ContentValues();
         SQLiteDatabase db = this.getWritableDatabase();
-
+       // Log.i();
         values.put(UserTable.ID, user.getId());
         values.put(UserTable.IS_CONNECTED, user.getIsConnected());
         values.put(UserTable.CONNECTION_SOURCE, user.getConnectionSource());
@@ -54,12 +55,6 @@ public class DBUserHandler extends DBHelper implements IUserDAO {
         SQLiteDatabase db = this.getReadableDatabase();
         User user = null;
 
-        String[] projection = {
-                UserTable.ID,
-                UserTable.IS_CONNECTED,
-                UserTable.CONNECTION_SOURCE
-        };
-
         Cursor cursor = db.rawQuery(UserTable.SQL_SELECT_ALL, null);
     /*    Cursor cursor = db.query(
                 UserTable.TABLE_NAME,
@@ -67,10 +62,10 @@ public class DBUserHandler extends DBHelper implements IUserDAO {
                 String.valueOf(id), null, null, null, null
         ); */
 
-        if(cursor.moveToFirst()) {
+        if (cursor.moveToFirst()) {
             user = new User(
                     Integer.parseInt(cursor.getString(0)),
-                    Boolean.parseBoolean(cursor.getString(1)),
+                    Integer.parseInt(cursor.getString(1)),
                     cursor.getString(2));
         }
 
@@ -80,6 +75,7 @@ public class DBUserHandler extends DBHelper implements IUserDAO {
 
     /**
      * Update user
+     *
      * @param user user
      */
     @Override
@@ -100,8 +96,12 @@ public class DBUserHandler extends DBHelper implements IUserDAO {
         db.close();
     }
 
+    /**
+     * Delete all rows
+     */
     @Override
-    public void delete(User user) {
-
+    public void delete() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM " + UserTable.TABLE_NAME);
     }
 }
