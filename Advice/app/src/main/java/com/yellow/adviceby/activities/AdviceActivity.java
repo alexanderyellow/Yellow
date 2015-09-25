@@ -36,16 +36,25 @@ public class AdviceActivity extends AppCompatActivity
             return;
         }
         switch ((State) data) {
-            case CREATED:
+            case SIGN_IN:
                 break;
-            case OPENING:
-                break;
-            case OPENED:
+            case SIGNED_IN:
+           /*     try {
+                    String emailAddress = googleConnection.getAccountName();
+                    Log.i("Lalalal", emailAddress);
+
+                } catch (Exception ex) {
+                    String exception = ex.getLocalizedMessage();
+                    String exceptionString = ex.toString();
+                }
+                finish();  */
                 break;
             case CLOSED:
                 Intent intent = new Intent(AdviceActivity.this, LoginActivity.class);
                 startActivity(intent);
                 finish();
+                break;
+            case IN_PROGRESS:
                 break;
         }
     }

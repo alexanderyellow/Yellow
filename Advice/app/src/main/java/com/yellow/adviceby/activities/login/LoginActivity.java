@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.yellow.adviceby.R;
+import com.yellow.adviceby.activities.AdviceActivity;
 import com.yellow.adviceby.activities.CreateAccountActivity;
 import com.yellow.adviceby.db.DBUserHandler;
 import com.yellow.adviceby.model.User;
@@ -25,7 +26,7 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
     private LinearLayout signInButton;
     private LinearLayout getStartedButton;
 
-    private GoogleLoginActivity googleConnection;
+    private GoogleConnection googleConnection;
     private ProgressDialog progress;
 
     @Override
@@ -33,18 +34,16 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
         if (observable != googleConnection) {
             return;
         }
-        switch ((StateA) data) {
+        switch ((State) data) {
             case SIGN_IN:
-                break;
-            case OPENING:
+                progress.show();
                 break;
             case SIGNED_IN:
-        //        progress.dismiss();
-        //        Intent intent = new Intent(LoginActivity.this, AdviceActivity.class);
-        //        startActivity(intent);
+                progress.dismiss();
+                Intent intent = new Intent(LoginActivity.this, AdviceActivity.class);
+                startActivity(intent);
+                finish();
 
-                // We are signed in!
-                // Retrieve some profile information to personalize our app for the user.
            /*     try {
                     String emailAddress = googleConnection.getAccountName();
                     Log.i("Lalalal", emailAddress);
@@ -56,10 +55,11 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
                 finish();  */
                 break;
             case CLOSED:
-        //        progress.dismiss();
+                progress.dismiss();
                 onSignedOutUI();
                 break;
             case IN_PROGRESS:
+                progress.dismiss();
                 break;
         }
     }
@@ -79,13 +79,19 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
         signInButton.setOnClickListener(this);
         getStartedButton.setOnClickListener(this);
 
-        googleConnection = GoogleLoginActivity.getInstance(this);
+        googleConnection = GoogleConnection.getInstance(this);
         googleConnection.addObserver(this);
         googleConnection.revokeAccessAndDisconnect();
-/*
+
+        initProgressDialog();
+    }
+
+    private void initProgressDialog() {
         progress = new ProgressDialog(this);
         progress.setTitle("Signing in");
-        progress.setMessage("Waiting...");  */
+        progress.setMessage("Waiting...");
+        progress.setCancelable(false);
+        progress.setCanceledOnTouchOutside(false);
     }
 
     @Override
@@ -105,30 +111,29 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.plus_sign_in_button:
-        //        startActivityForResult(new Intent(LoginActivity.this, GoogleLoginActivity.class), 1);
                 googleConnection.connect();
                 break;
             case R.id.facebook_sign_in_button:
-        //        startActivityForResult(new Intent(LoginActivity.this, FacebookLoginActivity.class), 2);
+                //        startActivityForResult(new Intent(LoginActivity.this, FacebookLoginActivity.class), 2);
                 googleConnection.revokeAccessAndDisconnect();
                 break;
             case R.id.sign_in_btn:
                 LoginDialog loginDialog = new LoginDialog(LoginActivity.this);
                 loginDialog.show();
-            //    DialogFragment newFragment = new LoginDialogFragment();
-            //    newFragment.show(getSupportFragmentManager(), "signin");
-            //    Intent intent1 = new Intent(LoginActivity.this, AdviceActivity.class);
-            //    startActivity(intent1);
+                //    DialogFragment newFragment = new LoginDialogFragment();
+                //    newFragment.show(getSupportFragmentManager(), "signin");
+                //    Intent intent1 = new Intent(LoginActivity.this, AdviceActivity.class);
+                //    startActivity(intent1);
                 break;
             case R.id.get_started_btn:
 
                 /**
                  * Choose account
                  */
-            //    Intent intent = AccountPicker.newChooseAccountIntent(null, null, new String[]{"com.google"},
-            //            false, null, null, null, null);
+                //    Intent intent = AccountPicker.newChooseAccountIntent(null, null, new String[]{"com.google"},
+                //            false, null, null, null, null);
                 //startActivityForResult(intent, 3);
-            //    startActivity(intent);
+                //    startActivity(intent);
 
                 Intent intent2 = new Intent(LoginActivity.this, CreateAccountActivity.class);
                 startActivity(intent2);
@@ -138,7 +143,7 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
 
     private void dbUpdate(User user) {
         DBUserHandler dbUserHandler = new DBUserHandler(this);
-        if(dbUserHandler.hasRecord()) {
+        if (dbUserHandler.hasRecord()) {
             dbUserHandler.update(user);
         } else {
             dbUserHandler.create(user);
@@ -150,13 +155,13 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
         Log.i("LoginActivity", "onDestroy");
         super.onDestroy();
         googleConnection.deleteObserver(this);
-    //    googleConnection.disconnect();
+        //    googleConnection.disconnect();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.i("LoginActivity", "onActivityResult");
-        if (GoogleConnection.REQUEST_CODE == requestCode) {
+        if (GoogleConnection.RC_SIGN_IN == requestCode) {
             Log.i("LoginActivity", "onActivityResult.if");
             googleConnection.onActivityResult(resultCode, resultCode, data);
         }

@@ -1,6 +1,8 @@
 package com.yellow.adviceby.activities.login;
 
 import android.app.Activity;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,44 +13,43 @@ import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.plus.Plus;
+import com.yellow.adviceby.db.DBUserHandler;
 
 import java.lang.ref.WeakReference;
 import java.util.Observable;
 
-/**
- * Created by SheykinAV on 23.09.2015.
- * http://stackoverflow.com/questions/22368520/how-to-correctly-use-google-plus-sign-in-with-multiple-activities
- * https://github.com/jpventura/google-play-services/blob/wip/Identity_Lessons_Final/UdacityPlus2_1/app/src/main/java/com/lmoroney/udacityplus2_1/common/GoogleConnection.java
- */
 public class GoogleConnection extends Observable
         implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    public static final int REQUEST_CODE = 0;
+    private static final String TAG = "GoogleLoginActivity";
 
-    private static GoogleConnection sGoogleConnection;
-
+    private PendingIntent mSignInIntent;
     private WeakReference<Activity> activityWeakReference;
-    private GoogleApiClient.Builder googleApiClientBuilder;
-    private GoogleApiClient googleApiClient;
-    private ConnectionResult connectionResult;
     private static State currentState;
+    private static GoogleConnection sGoogleConnection;
+    private GoogleApiClient.Builder mGoogleApiClientBuilder;
+    private GoogleApiClient mGoogleApiClient;
+
+    public static final int RC_SIGN_IN = 0;
+
+    private DBUserHandler dbUserHandler;
 
     private GoogleConnection(Activity activity) {
         activityWeakReference = new WeakReference<>(activity);
 
-        googleApiClientBuilder =
+        mGoogleApiClientBuilder =
                 new GoogleApiClient.Builder(activityWeakReference.get().getApplicationContext())
                         .addConnectionCallbacks(this)
                         .addOnConnectionFailedListener(this)
                         .addApi(Plus.API, Plus.PlusOptions.builder().build())
                         .addScope(new Scope(Scopes.PLUS_LOGIN));
 
-        googleApiClient = googleApiClientBuilder.build();
+        mGoogleApiClient = mGoogleApiClientBuilder.build();
         currentState = State.CLOSED;
     }
 
     private void changeState(State state) {
-        Log.i("GoogleConnection", "getInstance.State = " + state.toString());
+        Log.i("GoogleConnection", "changeState.StateA = " + state.toString());
         currentState = state;
         setChanged();
         notifyObservers(state);
@@ -75,121 +76,144 @@ public class GoogleConnection extends Observable
     }
 
     @Override
-    public void onConnected(Bundle hint) {
-        Log.i("GoogleConnection", "onConnected");
-        changeState(State.OPENED);
-    }
-
-    @Override
     public void onConnectionSuspended(int cause) {
+        Log.i(TAG, "onConnectionSuspended");
         // The connection to Google Play services was lost for some reason.
         // We call connect() to attempt to re-establish the connection or get a
         // ConnectionResult that we can attempt to resolve.
-        changeState(State.CLOSED);
+        changeState(State.SIGN_IN);
         connect();
     }
 
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.i("GoogleConnection", "onConnectionFailed");
-        if (currentState.equals(State.CLOSED) && connectionResult.hasResolution()) {
-            Log.i("GoogleConnection", "onConnectionFailed.if");
-            changeState(State.CREATED);
-            this.connectionResult = connectionResult;
-            try {
-                activityWeakReference.get().startIntentSenderForResult(connectionResult.getResolution().getIntentSender(),
-                        REQUEST_CODE, null, 0, 0, 0);
-            } catch (IntentSender.SendIntentException e) {
+    public void onConnected(Bundle connectionHint) {
+        // Reaching onConnected means we consider the user signed in.
+        Log.i(TAG, "onConnected");
 
+        // Indicate that the sign in process is complete.
+        changeState(State.SIGNED_IN);
+
+    /*    User user = new User(1, 1, "g+");
+        dbUserHandler.delete();
+        dbUserHandler.create(user);  */
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult result) {
+        // Refer to the javadoc for ConnectionResult to see what error codes might
+        // be returned in onConnectionFailed.
+        Log.i(TAG, "onConnectionFailed: ConnectionResult.getErrorCode() = "
+                + result.getErrorCode());
+
+        if (!currentState.equals(State.IN_PROGRESS)) {
+            Log.i(TAG, "onConnectionFailed: ConnectionResult.if()");
+            // We do not have an intent in progress so we should store the latest
+            // error resolution intent for use when the sign in button is clicked.
+            mSignInIntent = result.getResolution();
+            //    mSignInError = result.getErrorCode();
+
+            if (currentState.equals(State.SIGN_IN)) {
+                // STATE_SIGN_IN indicates the user already clicked the sign in button
+                // so we should continue processing errors until the user is signed in
+                // or they click cancel.
+                Log.i(TAG, "onConnectionFailed: ConnectionResult.resolveSignInError() = "
+                        + result.getErrorCode());
+                resolveSignInError();
+            }
+        }
+    }
+
+    private void resolveSignInError() {
+        Log.i(TAG, "onConnectionFailed: ConnectionResult.resolveSignInError()");
+        if (mSignInIntent != null) {
+            Log.i(TAG, "onConnectionFailed: ConnectionResult.resolveSignInError.if()");
+            // We have an intent which will allow our user to sign in or
+            // resolve an error.  For example if the user needs to
+            // select an account to sign in with, or if they need to consent
+            // to the permissions your app is requesting.
+
+            try {
+                // Send the pending intent that we stored on the most recent
+                // OnConnectionFailed callback.  This will allow the user to
+                // resolve the error currently preventing our connection to
+                // Google Play services.
+                changeState(State.IN_PROGRESS);
+                activityWeakReference.get().startIntentSenderForResult(mSignInIntent.getIntentSender(),
+                        RC_SIGN_IN, null, 0, 0, 0);
+            } catch (IntentSender.SendIntentException e) {
+                Log.i(TAG, "Sign in intent could not be sent: "
+                        + e.getLocalizedMessage());
+                // The intent was canceled before it was sent.  Attempt to connect to
+                // get an updated ConnectionResult.
+                changeState(State.SIGN_IN);
+                connect();
             }
         } else {
-            Log.i("GoogleConnection", "onConnectionFailed.else");
-            connect();
+            // Google Play services wasn't able to provide an intent for some
+            // error types, so we show the default Google Play services error
+            // dialog which may still start an intent on our behalf if the
+            // user can resolve the issue.
+            changeState(State.CLOSED);
             Toast.makeText(activityWeakReference.get().getApplicationContext(), "Connection failed", Toast.LENGTH_SHORT).show();
-        //    startActivityForResult(new Intent(getApplicationContext(), LoginActivity.class), 1);
-        //    connect();
         }
     }
 
-    public void onActivityResult(int result) {
-        Log.i("GoogleConnection", "onActivityResult");
-        if (result == Activity.RESULT_OK) {
-            Log.i("GoogleConnection", "onActivityResult.if");
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.i(TAG, "onActivityResult");
+
+        if (resultCode == activityWeakReference.get().RESULT_OK) {
+            Log.i(TAG, "onActivityResult.RESULT_OK");
             // If the error resolution was successful we should continue
             // processing errors.
-            changeState(State.CREATED);
+            changeState(State.SIGN_IN);
         } else {
-            Log.i("GoogleConnection", "onActivityResult.else");
+            Log.i(TAG, "onActivityResult.RESULT_NOT_OK");
             // If the error resolution was not successful or the user canceled,
             // we should stop processing errors.
-            changeState(State.CLOSED);
+            changeState(State.SIGNED_IN);
         }
 
-        // If Google Play services resolved the issue with a dialog then
-        // onStart is not called so we need to re-attempt connection here.
         onSignIn();
-    }
 
-    public String getAccountName() {
-        return Plus.AccountApi.getAccountName(googleApiClient);
     }
 
     protected void onSignIn() {
-        Log.i("GoogleConnection", "onSignIn");
-        if (!googleApiClient.isConnected() && !googleApiClient.isConnecting()) {
+        Log.i(TAG, "onSignIn = " + mGoogleApiClient.isConnected());
+        if (!mGoogleApiClient.isConnected() && !mGoogleApiClient.isConnecting()) {
             Log.i("GoogleConnection", "onSignIn.if");
-            googleApiClient.connect();
+            changeState(State.SIGN_IN);
+            mGoogleApiClient.connect();
         }
     }
 
     protected void onSignOut() {
-        Log.i("GoogleConnection", "onSignOut");
-        if (googleApiClient.isConnected()) {
-            Log.i("GoogleConnection", "onSignOut.if");
+        Log.i(TAG, "onSignOut");
+        if (mGoogleApiClient.isConnected()) {
+            Log.i(TAG, "onSignOut.if");
             // We clear the default account on sign out so that Google Play
             // services will not return an onConnected callback without user
             // interaction.
 
-            Plus.AccountApi.clearDefaultAccount(googleApiClient);
-            googleApiClient.disconnect();
+            Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
+            mGoogleApiClient.disconnect();
             changeState(State.CLOSED);
-        //    googleApiClient.connect();
-        }
-    }
-
-    protected void onSignUp() {
-        // We have an intent which will allow our user to sign in or
-        // resolve an error.  For example if the user needs to
-        // select an account to sign in with, or if they need to consent
-        // to the permissions your app is requesting.
-
-        try {
-            // Send the pending intent that we stored on the most recent
-            // OnConnectionFailed callback.  This will allow the user to
-            // resolve the error currently preventing our connection to
-            // Google Play services.
-            changeState(State.OPENING);
-            connectionResult.startResolutionForResult(activityWeakReference.get(), REQUEST_CODE);
-        } catch (IntentSender.SendIntentException e) {
-            // The intent was canceled before it was sent.  Attempt to connect to
-            // get an updated ConnectionResult.
-            changeState(State.CREATED);
-            googleApiClient.connect();
         }
     }
 
     protected void onRevokeAccessAndDisconnect() {
+        Log.i(TAG, "onRevokeAccessAndDisconnect");
         // After we revoke permissions for the user with a GoogleApiClient
         // instance, we must discard it and create a new one.
-        Plus.AccountApi.clearDefaultAccount(googleApiClient);
+        Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
 
         // Our sample has caches no user data from Google+, however we
         // would normally register a callback on revokeAccessAndDisconnect
         // to delete user data so that we comply with Google developer
         // policies.
-        Plus.AccountApi.revokeAccessAndDisconnect(googleApiClient);
-    //    googleApiClient = googleApiClientBuilder.build();
-    //    googleApiClient.connect();
+        Plus.AccountApi.revokeAccessAndDisconnect(mGoogleApiClient);
+        mGoogleApiClient.disconnect();
+        sGoogleConnection = null;
         changeState(State.CLOSED);
     }
 

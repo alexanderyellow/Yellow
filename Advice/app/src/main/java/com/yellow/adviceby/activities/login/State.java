@@ -1,13 +1,25 @@
 package com.yellow.adviceby.activities.login;
 
 /**
- * Created by SheykinAV on 23.09.2015.
+ * Created by SheykinAV on 24.09.2015.
  */
 public enum State {
-    CREATED {
+
+    SIGN_IN {
+        @Override
+        void disconnect(GoogleConnection googleConnection) {
+            googleConnection.onSignOut();
+        }
+
+        @Override
+        void revokeAccessAndDisconnect(GoogleConnection googleConnection) {
+            googleConnection.onRevokeAccessAndDisconnect();
+        }
+    },
+    IN_PROGRESS {
         @Override
         void connect(GoogleConnection googleConnection) {
-            googleConnection.onSignUp();
+            googleConnection.onSignIn();
         }
 
         @Override
@@ -15,19 +27,18 @@ public enum State {
             googleConnection.onSignOut();
         }
     },
-    OPENING {
-    },
-    OPENED {
-            @Override
-            void disconnect(GoogleConnection googleConnection) {
-                googleConnection.onSignOut();
-            }
+    SIGNED_IN {
+        @Override
+        void connect(GoogleConnection googleConnection) {
+            googleConnection.onSignIn();
+        }
 
-            @Override
-            void revokeAccessAndDisconnect(GoogleConnection googleConnection) {
-                googleConnection.onRevokeAccessAndDisconnect();
-            }
+        @Override
+        void revokeAccessAndDisconnect(GoogleConnection googleConnection) {
+            googleConnection.onRevokeAccessAndDisconnect();
+        }
     },
+
     CLOSED {
         @Override
         void connect(GoogleConnection googleConnection) {
@@ -43,4 +54,5 @@ public enum State {
 
     void revokeAccessAndDisconnect(GoogleConnection googleConnection) {
     }
+
 }
