@@ -22,6 +22,10 @@ public class LoginDialog extends AppCompatDialog implements View.OnClickListener
     private EditText inputPassword;
     private TextInputLayout inputLayoutEmail, inputLayoutPassword;
 
+    /**
+     * Constructor
+     * @param context
+     */
     public LoginDialog(Context context) {
         super(context, R.style.Base_Theme_AppCompat_Dialog);
         setCancelable(false);

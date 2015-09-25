@@ -28,7 +28,7 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
     private GoogleConnection googleConnection;
     private ProgressDialog progress;
 
-    private FacebookLoginActivity facebookLogin;
+    private FacebookConnection facebookLogin;
 
     @Override
     public void update(Observable observable, Object data) {
@@ -40,8 +40,10 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
                 progress.show();
                 break;
             case SIGNED_IN:
+                Log.i("LoginActivity", "SIGNED_IN");
                 progress.dismiss();
                 Intent intent = new Intent(LoginActivity.this, AdviceActivity.class);
+                intent.putExtra("source", "g");
                 startActivity(intent);
                 finish();
 
@@ -57,7 +59,6 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
                 break;
             case CLOSED:
                 progress.dismiss();
-                onSignedOutUI();
                 break;
             case IN_PROGRESS:
                 progress.dismiss();
@@ -83,7 +84,7 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
         googleConnection = GoogleConnection.getInstance(this);
         googleConnection.addObserver(this);
 
-        facebookLogin = FacebookLoginActivity.getInstance(this);
+        facebookLogin = FacebookConnection.getInstance(this);
 
         initProgressDialog();
     }
@@ -163,18 +164,15 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.i("LoginActivity", "onActivityResult");
-        facebookLogin.onActivityResult(requestCode, resultCode, data);
-    /*    if (GoogleConnection.RC_SIGN_IN == requestCode) {
+        Log.i("LoginActivity", "onActivityResult = " + resultCode + "/" + requestCode);
+        if (GoogleConnection.RC_SIGN_IN == requestCode && resultCode != RESULT_CANCELED) {
             Log.i("LoginActivity", "onActivityResult.if");
             googleConnection.onActivityResult(resultCode, resultCode, data);
-        } */
+        } else if(resultCode != RESULT_CANCELED) {
+            facebookLogin.onActivityResult(requestCode, resultCode, data);
+        }
 
 
-    }
-
-    private void onSignedOutUI() {
-        // Update the UI to reflect that the user is signed out.
     }
 
 }
