@@ -12,7 +12,6 @@ import android.widget.LinearLayout;
 
 import com.yellow.adviceby.R;
 import com.yellow.adviceby.activities.AdviceActivity;
-import com.yellow.adviceby.activities.CreateAccountActivity;
 import com.yellow.adviceby.db.DBUserHandler;
 import com.yellow.adviceby.model.User;
 
@@ -28,6 +27,8 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
 
     private GoogleConnection googleConnection;
     private ProgressDialog progress;
+
+    private FacebookLoginActivity facebookLogin;
 
     @Override
     public void update(Observable observable, Object data) {
@@ -81,7 +82,8 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
 
         googleConnection = GoogleConnection.getInstance(this);
         googleConnection.addObserver(this);
-        googleConnection.revokeAccessAndDisconnect();
+
+        facebookLogin = FacebookLoginActivity.getInstance(this);
 
         initProgressDialog();
     }
@@ -114,8 +116,9 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
                 googleConnection.connect();
                 break;
             case R.id.facebook_sign_in_button:
-                //        startActivityForResult(new Intent(LoginActivity.this, FacebookLoginActivity.class), 2);
-                googleConnection.revokeAccessAndDisconnect();
+                facebookLogin.signIn(this);
+            //    startActivityForResult(new Intent(LoginActivity.this, FacebookLoginActivity.class), 2);
+            //    googleConnection.revokeAccessAndDisconnect();
                 break;
             case R.id.sign_in_btn:
                 LoginDialog loginDialog = new LoginDialog(LoginActivity.this);
@@ -126,7 +129,7 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
                 //    startActivity(intent1);
                 break;
             case R.id.get_started_btn:
-
+                facebookLogin.signOut();
                 /**
                  * Choose account
                  */
@@ -135,8 +138,8 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
                 //startActivityForResult(intent, 3);
                 //    startActivity(intent);
 
-                Intent intent2 = new Intent(LoginActivity.this, CreateAccountActivity.class);
-                startActivity(intent2);
+            //    Intent intent2 = new Intent(LoginActivity.this, CreateAccountActivity.class);
+            //    startActivity(intent2);
                 break;
         }
     }
@@ -161,10 +164,13 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.i("LoginActivity", "onActivityResult");
-        if (GoogleConnection.RC_SIGN_IN == requestCode) {
+        facebookLogin.onActivityResult(requestCode, resultCode, data);
+    /*    if (GoogleConnection.RC_SIGN_IN == requestCode) {
             Log.i("LoginActivity", "onActivityResult.if");
             googleConnection.onActivityResult(resultCode, resultCode, data);
-        }
+        } */
+
+
     }
 
     private void onSignedOutUI() {
