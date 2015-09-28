@@ -22,17 +22,19 @@ import java.util.Observable;
 /**
  * Created by SheykinAV on 01.09.2015.
  */
-public class FacebookLoginActivity extends Observable{
+public class FacebookConnection extends Observable{
 
-    private static final String TAG = "FacebookLoginActivity";
+    private static final String TAG = "FacebookConnection";
+    public static final String SOURCE = "fb";
 
     private CallbackManager callbackManager;
     private AccessTokenTracker mTokenTracker;
     private ProfileTracker mProfileTracker;
+    private static State currentState;
 
-    private static FacebookLoginActivity facebookLogin;
+    private static FacebookConnection facebookLogin;
 
-    public FacebookLoginActivity(final Activity activity) {
+    public FacebookConnection(final Activity activity) {
         FacebookSdk.sdkInitialize(activity.getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
 
@@ -44,8 +46,8 @@ public class FacebookLoginActivity extends Observable{
                         Log.i(TAG, "onSuccess:");
                         Toast.makeText(activity.getApplicationContext(), "onSuccess",
                                 Toast.LENGTH_LONG).show();
-                    /*    Intent intent = new Intent(FacebookLoginActivity.this, AdviceActivity.class);
-                        startActivity(intent); */
+                        changeState(State.SUCCESS);
+
                     }
 
                     @Override
@@ -53,6 +55,7 @@ public class FacebookLoginActivity extends Observable{
                         Log.i(TAG, "onCancel:");
                         Toast.makeText(activity.getApplicationContext(), "onCancel",
                                 Toast.LENGTH_LONG).show();
+                        changeState(State.CANCEL);
                     /*    Intent intent = new Intent(FacebookLoginActivity.this, LoginActivity.class);
                         startActivity(intent); */
                     }
@@ -64,6 +67,7 @@ public class FacebookLoginActivity extends Observable{
                         startActivity(intent); */
                         Toast.makeText(activity.getApplicationContext(), "onError",
                                 Toast.LENGTH_LONG).show();
+                        changeState(State.ERROR);
                     }
 
                 });
@@ -87,10 +91,17 @@ public class FacebookLoginActivity extends Observable{
 
     }
 
-    public static FacebookLoginActivity getInstance(Activity activity) {
+    private void changeState(State state) {
+        Log.i("GoogleConnection", "changeState.State = " + state.toString());
+        currentState = state;
+        setChanged();
+        notifyObservers(state);
+    }
+
+    public static FacebookConnection getInstance(Activity activity) {
         if (null == facebookLogin) {
             Log.i(TAG, "getInstance.null");
-            facebookLogin = new FacebookLoginActivity(activity);
+            facebookLogin = new FacebookConnection(activity);
         }
 
         return facebookLogin;

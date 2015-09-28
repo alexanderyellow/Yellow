@@ -5,6 +5,18 @@ package com.yellow.adviceby.activities.login;
  */
 public enum State {
 
+    SUCCESS {
+
+    },
+
+    CANCEL {
+
+    },
+
+    ERROR {
+
+    },
+
     SIGN_IN {
         @Override
         void disconnect(GoogleConnection googleConnection) {

@@ -22,6 +22,7 @@ public class GoogleConnection extends Observable
         implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = "GoogleLoginActivity";
+    public static final String SOURCE = "g";
 
     private PendingIntent mSignInIntent;
     private WeakReference<Activity> activityWeakReference;

@@ -59,10 +59,6 @@
         <meta-data
             android:name="com.facebook.sdk.ApplicationName"
             android:value="@string/facebook_app_name" />
-
-        <activity
-            android:name=".activities.login.FacebookLoginActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity
             android:name=".activities.AdviceActivity"
             android:label="@string/title_activity_advice"
@@ -70,8 +66,6 @@
         <activity
             android:name=".activities.CreateAccountActivity"
             android:label="@string/title_activity_create_account"/>
-        <activity android:name=".activities.logout.GoogleLogoutActivity"
-            android:label=""/>
     </application>
 
 </manifest>

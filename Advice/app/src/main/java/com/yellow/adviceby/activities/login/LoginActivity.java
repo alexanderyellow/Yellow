@@ -20,6 +20,8 @@ import java.util.Observer;
 
 public class LoginActivity extends AppCompatActivity implements Observer, OnClickListener {
 
+    private static final String SOURCE = "source";
+
     private Button signInGoogleButton;
     private Button signInFacebookButton;
     private LinearLayout signInButton;
@@ -28,23 +30,32 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
     private GoogleConnection googleConnection;
     private ProgressDialog progress;
 
-    private FacebookConnection facebookLogin;
+    private FacebookConnection facebookConnection;
 
     @Override
     public void update(Observable observable, Object data) {
-        if (observable != googleConnection) {
+
+        if (observable != googleConnection && observable != facebookConnection) {
+            Log.i("LoginActivity", "return = " + observable);
             return;
         }
         switch ((State) data) {
+            case SUCCESS:
+                Log.i("LoginActivity", "SUCCESS");
+                Intent intent1 = new Intent(LoginActivity.this, AdviceActivity.class);
+                intent1.putExtra(SOURCE, FacebookConnection.SOURCE);
+                startActivity(intent1);
+                finish();
+                break;
             case SIGN_IN:
                 progress.show();
                 break;
             case SIGNED_IN:
                 Log.i("LoginActivity", "SIGNED_IN");
                 progress.dismiss();
-                Intent intent = new Intent(LoginActivity.this, AdviceActivity.class);
-                intent.putExtra("source", "g");
-                startActivity(intent);
+                Intent intent2 = new Intent(LoginActivity.this, AdviceActivity.class);
+                intent2.putExtra(SOURCE, GoogleConnection.SOURCE);
+                startActivity(intent2);
                 finish();
 
            /*     try {
@@ -81,10 +92,13 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
         signInButton.setOnClickListener(this);
         getStartedButton.setOnClickListener(this);
 
+
+
+        facebookConnection = FacebookConnection.getInstance(this);
+        facebookConnection.addObserver(this);
+
         googleConnection = GoogleConnection.getInstance(this);
         googleConnection.addObserver(this);
-
-        facebookLogin = FacebookConnection.getInstance(this);
 
         initProgressDialog();
     }
@@ -117,7 +131,7 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
                 googleConnection.connect();
                 break;
             case R.id.facebook_sign_in_button:
-                facebookLogin.signIn(this);
+                facebookConnection.signIn(this);
             //    startActivityForResult(new Intent(LoginActivity.this, FacebookLoginActivity.class), 2);
             //    googleConnection.revokeAccessAndDisconnect();
                 break;
@@ -130,7 +144,7 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
                 //    startActivity(intent1);
                 break;
             case R.id.get_started_btn:
-                facebookLogin.signOut();
+                facebookConnection.signOut();
                 /**
                  * Choose account
                  */
@@ -159,6 +173,7 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
         Log.i("LoginActivity", "onDestroy");
         super.onDestroy();
         googleConnection.deleteObserver(this);
+        facebookConnection.deleteObserver(this);
         //    googleConnection.disconnect();
     }
 
@@ -169,7 +184,7 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
             Log.i("LoginActivity", "onActivityResult.if");
             googleConnection.onActivityResult(resultCode, resultCode, data);
         } else if(resultCode != RESULT_CANCELED) {
-            facebookLogin.onActivityResult(requestCode, resultCode, data);
+            facebookConnection.onActivityResult(requestCode, resultCode, data);
         }
 
 
