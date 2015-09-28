@@ -20,7 +20,7 @@ public enum State {
     SIGN_IN {
         @Override
         void disconnect(GoogleConnection googleConnection) {
-            googleConnection.onSignOut();
+            googleConnection.signOut();
         }
 
         @Override
@@ -31,18 +31,18 @@ public enum State {
     IN_PROGRESS {
         @Override
         void connect(GoogleConnection googleConnection) {
-            googleConnection.onSignIn();
+            googleConnection.signIn();
         }
 
         @Override
         void disconnect(GoogleConnection googleConnection) {
-            googleConnection.onSignOut();
+            googleConnection.signOut();
         }
     },
     SIGNED_IN {
         @Override
         void connect(GoogleConnection googleConnection) {
-            googleConnection.onSignIn();
+            googleConnection.signIn();
         }
 
         @Override
@@ -54,7 +54,7 @@ public enum State {
     CLOSED {
         @Override
         void connect(GoogleConnection googleConnection) {
-            googleConnection.onSignIn();
+            googleConnection.signIn();
         }
     };
 

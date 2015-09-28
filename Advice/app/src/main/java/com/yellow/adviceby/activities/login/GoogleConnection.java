@@ -16,9 +16,8 @@ import com.google.android.gms.plus.Plus;
 import com.yellow.adviceby.db.DBUserHandler;
 
 import java.lang.ref.WeakReference;
-import java.util.Observable;
 
-public class GoogleConnection extends Observable
+public class GoogleConnection extends Connection
         implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = "GoogleLoginActivity";
@@ -26,7 +25,6 @@ public class GoogleConnection extends Observable
 
     private PendingIntent mSignInIntent;
     private WeakReference<Activity> activityWeakReference;
-    private static State currentState;
     private static GoogleConnection sGoogleConnection;
     private GoogleApiClient.Builder mGoogleApiClientBuilder;
     private GoogleApiClient mGoogleApiClient;
@@ -47,13 +45,6 @@ public class GoogleConnection extends Observable
 
         mGoogleApiClient = mGoogleApiClientBuilder.build();
         currentState = State.CLOSED;
-    }
-
-    private void changeState(State state) {
-        Log.i("GoogleConnection", "changeState.StateA = " + state.toString());
-        currentState = state;
-        setChanged();
-        notifyObservers(state);
     }
 
     public void connect() {
@@ -160,7 +151,7 @@ public class GoogleConnection extends Observable
         }
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.i(TAG, "onActivityResult");
 
         if (resultCode == activityWeakReference.get().RESULT_OK) {
@@ -175,11 +166,11 @@ public class GoogleConnection extends Observable
             changeState(State.SIGNED_IN);
         }
 
-        onSignIn();
+        signIn();
 
     }
 
-    protected void onSignIn() {
+    public void signIn() {
         Log.i(TAG, "onSignIn = " + mGoogleApiClient.isConnected());
         if (!mGoogleApiClient.isConnected() && !mGoogleApiClient.isConnecting()) {
             Log.i("GoogleConnection", "onSignIn.if");
@@ -188,7 +179,7 @@ public class GoogleConnection extends Observable
         }
     }
 
-    protected void onSignOut() {
+    public void signOut() {
         Log.i(TAG, "onSignOut");
         if (mGoogleApiClient.isConnected()) {
             Log.i(TAG, "onSignOut.if");
@@ -196,9 +187,10 @@ public class GoogleConnection extends Observable
             // services will not return an onConnected callback without user
             // interaction.
 
-            Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
+        /*    Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
             mGoogleApiClient.disconnect();
-            changeState(State.CLOSED);
+            changeState(State.CLOSED);  */
+            onRevokeAccessAndDisconnect();
         }
     }
 

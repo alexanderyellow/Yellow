@@ -27,24 +27,24 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
     private LinearLayout signInButton;
     private LinearLayout getStartedButton;
 
-    private GoogleConnection googleConnection;
+    private Connection connection;
     private ProgressDialog progress;
-
-    private FacebookConnection facebookConnection;
 
     @Override
     public void update(Observable observable, Object data) {
 
-        if (observable != googleConnection && observable != facebookConnection) {
+        if (observable != connection) {
             Log.i("LoginActivity", "return = " + observable);
             return;
         }
+
+        Intent intent = new Intent(LoginActivity.this, AdviceActivity.class);
+
         switch ((State) data) {
             case SUCCESS:
                 Log.i("LoginActivity", "SUCCESS");
-                Intent intent1 = new Intent(LoginActivity.this, AdviceActivity.class);
-                intent1.putExtra(SOURCE, FacebookConnection.SOURCE);
-                startActivity(intent1);
+                intent.putExtra(SOURCE, Connection.Source.FACEBOOK.toString());
+                startActivity(intent);
                 finish();
                 break;
             case SIGN_IN:
@@ -53,9 +53,8 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
             case SIGNED_IN:
                 Log.i("LoginActivity", "SIGNED_IN");
                 progress.dismiss();
-                Intent intent2 = new Intent(LoginActivity.this, AdviceActivity.class);
-                intent2.putExtra(SOURCE, GoogleConnection.SOURCE);
-                startActivity(intent2);
+                intent.putExtra(SOURCE, Connection.Source.GOOGLE.toString());
+                startActivity(intent);
                 finish();
 
            /*     try {
@@ -92,14 +91,6 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
         signInButton.setOnClickListener(this);
         getStartedButton.setOnClickListener(this);
 
-
-
-        facebookConnection = FacebookConnection.getInstance(this);
-        facebookConnection.addObserver(this);
-
-        googleConnection = GoogleConnection.getInstance(this);
-        googleConnection.addObserver(this);
-
         initProgressDialog();
     }
 
@@ -128,12 +119,15 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.plus_sign_in_button:
-                googleConnection.connect();
+                Log.i("LoginActivity", "plus_sign_in_button");
+                connection = Connection.getConnection(Connection.Source.GOOGLE, this);
+                connection.addObserver(this);
+                connection.signIn();
                 break;
             case R.id.facebook_sign_in_button:
-                facebookConnection.signIn(this);
-            //    startActivityForResult(new Intent(LoginActivity.this, FacebookLoginActivity.class), 2);
-            //    googleConnection.revokeAccessAndDisconnect();
+                connection = Connection.getConnection(Connection.Source.FACEBOOK, this);
+                connection.addObserver(this);
+                connection.signIn(this);
                 break;
             case R.id.sign_in_btn:
                 LoginDialog loginDialog = new LoginDialog(LoginActivity.this);
@@ -144,7 +138,7 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
                 //    startActivity(intent1);
                 break;
             case R.id.get_started_btn:
-                facebookConnection.signOut();
+            //    facebookConnection.signOut();
                 /**
                  * Choose account
                  */
@@ -172,9 +166,7 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
     protected void onDestroy() {
         Log.i("LoginActivity", "onDestroy");
         super.onDestroy();
-        googleConnection.deleteObserver(this);
-        facebookConnection.deleteObserver(this);
-        //    googleConnection.disconnect();
+        connection.deleteObserver(this);
     }
 
     @Override
@@ -182,12 +174,10 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
         Log.i("LoginActivity", "onActivityResult = " + resultCode + "/" + requestCode);
         if (GoogleConnection.RC_SIGN_IN == requestCode && resultCode != RESULT_CANCELED) {
             Log.i("LoginActivity", "onActivityResult.if");
-            googleConnection.onActivityResult(resultCode, resultCode, data);
+            connection.onActivityResult(resultCode, resultCode, data);
         } else if(resultCode != RESULT_CANCELED) {
-            facebookConnection.onActivityResult(requestCode, resultCode, data);
+            connection.onActivityResult(requestCode, resultCode, data);
         }
-
-
     }
 
 }

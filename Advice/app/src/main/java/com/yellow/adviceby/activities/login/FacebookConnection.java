@@ -17,12 +17,11 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 
 import java.util.Arrays;
-import java.util.Observable;
 
 /**
  * Created by SheykinAV on 01.09.2015.
  */
-public class FacebookConnection extends Observable{
+public class FacebookConnection extends Connection{
 
     private static final String TAG = "FacebookConnection";
     public static final String SOURCE = "fb";
@@ -30,7 +29,6 @@ public class FacebookConnection extends Observable{
     private CallbackManager callbackManager;
     private AccessTokenTracker mTokenTracker;
     private ProfileTracker mProfileTracker;
-    private static State currentState;
 
     private static FacebookConnection facebookLogin;
 
@@ -91,13 +89,6 @@ public class FacebookConnection extends Observable{
 
     }
 
-    private void changeState(State state) {
-        Log.i("GoogleConnection", "changeState.State = " + state.toString());
-        currentState = state;
-        setChanged();
-        notifyObservers(state);
-    }
-
     public static FacebookConnection getInstance(Activity activity) {
         if (null == facebookLogin) {
             Log.i(TAG, "getInstance.null");
@@ -114,6 +105,7 @@ public class FacebookConnection extends Observable{
 
     public void signOut() {
         LoginManager.getInstance().logOut();
+        changeState(State.CLOSED);
     }
 
 /*    @Override

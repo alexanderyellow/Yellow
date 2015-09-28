@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.yellow.adviceby.R;
+import com.yellow.adviceby.activities.login.Connection;
 import com.yellow.adviceby.activities.login.FacebookConnection;
 import com.yellow.adviceby.activities.login.GoogleConnection;
 import com.yellow.adviceby.activities.login.LoginActivity;
@@ -29,14 +30,13 @@ public class AdviceActivity extends AppCompatActivity
 
     //First We Declare Titles And Icons For Our Navigation drawerLayout List View
     //This Icons And Titles Are holded in an Array as you can see
-    private GoogleConnection googleConnection;
-    private FacebookConnection facebookConnection;
+    private Connection connection;
     private Intent intent;
     private String source;
 
     @Override
     public void update(Observable observable, Object data) {
-        if (observable != googleConnection && observable != facebookConnection) {
+        if (observable != connection) {
             return;
         }
         switch ((State) data) {
@@ -98,14 +98,16 @@ public class AdviceActivity extends AppCompatActivity
 
         intent = getIntent();
         source = intent.getStringExtra("source");
+        String googleSource = Connection.Source.GOOGLE.toString();
+        String facebookSource = Connection.Source.FACEBOOK.toString();
 
-        if (GoogleConnection.SOURCE.equalsIgnoreCase(source)) {
-            googleConnection = GoogleConnection.getInstance(this);
-            googleConnection.addObserver(this);
-        } else if (FacebookConnection.SOURCE.equalsIgnoreCase(source)) {
-            facebookConnection = FacebookConnection.getInstance(this);
-            facebookConnection.addObserver(this);
+        if (source.equalsIgnoreCase(googleSource)) {
+            connection = GoogleConnection.getInstance(this);
+        } else if (source.equalsIgnoreCase(facebookSource)) {
+            connection = FacebookConnection.getInstance(this);
         }
+
+        connection.addObserver(this);
 
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
 
@@ -143,10 +145,10 @@ public class AdviceActivity extends AppCompatActivity
                         Toast.makeText(getApplicationContext(), R.string.drawer_ic_signout, Toast.LENGTH_SHORT).show();
                     //    googleConnection.revokeAccessAndDisconnect();
                         //        startActivityForResult(new Intent(AdviceActivity.this, GoogleLogoutActivity.class), 1);
-                            facebookConnection.signOut();
-                        //    Intent intent = new Intent(AdviceActivity.this, LoginActivity.class);
-                        //    startActivity(intent);
-                        //    finish();
+                            connection.signOut();
+                    /*        Intent intent = new Intent(AdviceActivity.this, LoginActivity.class);
+                            startActivity(intent);
+                            finish(); */
                         return true;
                     default:
                         Toast.makeText(getApplicationContext(), "Somethings Wrong", Toast.LENGTH_SHORT).show();
@@ -259,11 +261,8 @@ public class AdviceActivity extends AppCompatActivity
     protected void onDestroy() {
         Log.i("AdviceActivity", "onDestroy");
         super.onDestroy();
-        if (GoogleConnection.SOURCE.equalsIgnoreCase(source)) {
-            googleConnection.deleteObserver(this);
-        } else if(FacebookConnection.SOURCE.equalsIgnoreCase(source)) {
-            facebookConnection.deleteObserver(this);
-        }
+        connection.deleteObserver(this);
+
         //    googleConnection.disconnect();
     }
 
