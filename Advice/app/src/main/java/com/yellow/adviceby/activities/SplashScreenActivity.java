@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.yellow.adviceby.R;
 import com.yellow.adviceby.activities.login.LoginActivity;
+import com.yellow.adviceby.activities.main.AdviceActivity;
 import com.yellow.adviceby.db.DBUserHandler;
 import com.yellow.adviceby.model.User;
 

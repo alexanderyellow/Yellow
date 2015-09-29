@@ -60,7 +60,7 @@
             android:name="com.facebook.sdk.ApplicationName"
             android:value="@string/facebook_app_name" />
         <activity
-            android:name=".activities.AdviceActivity"
+            android:name=".activities.main.AdviceActivity"
             android:label="@string/title_activity_advice"
             android:theme="@style/NoActionBarTheme"/>
         <activity

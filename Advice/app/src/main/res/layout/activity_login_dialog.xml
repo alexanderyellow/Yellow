@@ -42,7 +42,7 @@
                 android:id="@+id/email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="email"
+                android:hint="@string/input_email"
                 android:inputType="textEmailAddress"
                 android:focusableInTouchMode="true"/>
         </android.support.design.widget.TextInputLayout>
@@ -61,7 +61,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
-                android:hint="password"
+                android:hint="@string/input_password"
                 android:inputType="textPassword" />
         </android.support.design.widget.TextInputLayout>
 
@@ -75,14 +75,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/cancel"
-                android:background="@android:color/transparent"/>
+                android:background="@android:color/transparent"
+                android:textColor="@android:color/holo_blue_dark"
+                style="?android:attr/borderlessButtonStyle"/>
 
             <Button
                 android:id="@+id/signin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/signin"
-                android:background="@android:color/transparent"/>
+                android:textColor="@android:color/holo_blue_dark"
+                android:background="@android:color/transparent"
+                style="?android:attr/borderlessButtonStyle"/>
 
         </LinearLayout>
     </LinearLayout>

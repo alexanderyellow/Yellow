@@ -1,0 +1,9 @@
+<resources>
+    <string name="advice_name">Name</string>
+    <string name="advice_rating">Rating</string>
+    <string name="advice_body">Your advice</string>
+    <string name="advice_cancel">Cancel</string>
+    <string name="advice_post">Post</string>
+    <string name="err_msg_name">Enter the name</string>
+    <string name="err_msg_advice">Enter the advice</string>
+</resources>

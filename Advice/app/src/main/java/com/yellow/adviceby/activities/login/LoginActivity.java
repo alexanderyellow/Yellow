@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.yellow.adviceby.R;
-import com.yellow.adviceby.activities.AdviceActivity;
+import com.yellow.adviceby.activities.main.AdviceActivity;
 import com.yellow.adviceby.db.DBUserHandler;
 import com.yellow.adviceby.model.User;
 

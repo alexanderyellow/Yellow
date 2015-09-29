@@ -7,4 +7,7 @@
     <color name="header">#a6000000</color>
     <color name="navigation_background">#a4ffd339</color>
     <color name="dialog">#ffd339</color>
+    <color name="advice_dialog">#a3000000</color>
+    <color name="advice_hint">#48d7dd</color>
+    <color name="rating_star">#fff412</color>
 </resources>

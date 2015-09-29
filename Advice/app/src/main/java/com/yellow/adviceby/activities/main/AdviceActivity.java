@@ -1,7 +1,8 @@
-package com.yellow.adviceby.activities;
+package com.yellow.adviceby.activities.main;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -26,13 +27,14 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class AdviceActivity extends AppCompatActivity
-        implements Observer, NavigationView.OnNavigationItemSelectedListener {
+        implements Observer, NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
     //First We Declare Titles And Icons For Our Navigation drawerLayout List View
     //This Icons And Titles Are holded in an Array as you can see
     private Connection connection;
     private Intent intent;
     private String source;
+    private FloatingActionButton actionButtonAdd;
 
     @Override
     public void update(Observable observable, Object data) {
@@ -108,6 +110,9 @@ public class AdviceActivity extends AppCompatActivity
         }
 
         connection.addObserver(this);
+
+        actionButtonAdd = (FloatingActionButton) findViewById(R.id.btnAdd);
+        actionButtonAdd.setOnClickListener(this);
 
         navigationView = (NavigationView) findViewById(R.id.navigation_view);
 
@@ -266,6 +271,13 @@ public class AdviceActivity extends AppCompatActivity
         //    googleConnection.disconnect();
     }
 
+    @Override
+    public void onClick(View v) {
+        if(v.getId() == R.id.btnAdd){
+            CreateAdviceDialog adviceDialog = new CreateAdviceDialog(this);
+            adviceDialog.show();
+        }
+    }
 }
 
 
