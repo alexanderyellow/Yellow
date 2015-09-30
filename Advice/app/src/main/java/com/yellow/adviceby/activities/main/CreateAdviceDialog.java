@@ -2,9 +2,9 @@ package com.yellow.adviceby.activities.main;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.LayerDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatDialog;
 import android.support.v7.widget.AppCompatRatingBar;
 import android.text.Editable;
@@ -54,8 +54,10 @@ public class CreateAdviceDialog extends AppCompatDialog implements View.OnClickL
 
         ratingBar = (AppCompatRatingBar) findViewById(R.id.ratingBar);
         ratingBar.setStepSize(1);
-        LayerDrawable stars = (LayerDrawable) ratingBar.getProgressDrawable();
-        stars.getDrawable(2).setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_ATOP);
+        Drawable progress = ratingBar.getProgressDrawable();
+        DrawableCompat.setTint(progress, Color.YELLOW);
+    //    LayerDrawable stars = (LayerDrawable) ratingBar.getProgressDrawable();
+    //    stars.getDrawable(2).setColorFilter(Color.YELLOW, PorterDuff.Mode.SRC_ATOP);
 
         ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
