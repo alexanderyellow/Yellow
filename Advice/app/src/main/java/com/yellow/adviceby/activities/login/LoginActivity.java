@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.yellow.adviceby.R;
+import com.yellow.adviceby.activities.MainActivity;
 import com.yellow.adviceby.activities.main.AdviceActivity;
 import com.yellow.adviceby.db.DBUserHandler;
 import com.yellow.adviceby.model.User;
@@ -138,17 +139,20 @@ public class LoginActivity extends AppCompatActivity implements Observer, OnClic
                 //    startActivity(intent1);
                 break;
             case R.id.get_started_btn:
-            //    facebookConnection.signOut();
-                /**
-                 * Choose account
-                 */
-                //    Intent intent = AccountPicker.newChooseAccountIntent(null, null, new String[]{"com.google"},
-                //            false, null, null, null, null);
-                //startActivityForResult(intent, 3);
-                //    startActivity(intent);
+                Intent intent1 = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent1);
+                        //    startActivity(intent);
+                        //    facebookConnection.signOut();
+                        /**
+                         * Choose account
+                         */
+                        //    Intent intent = AccountPicker.newChooseAccountIntent(null, null, new String[]{"com.google"},
+                        //            false, null, null, null, null);
+                        //startActivityForResult(intent, 3);
+                        //    startActivity(intent);
 
-            //    Intent intent2 = new Intent(LoginActivity.this, CreateAccountActivity.class);
-            //    startActivity(intent2);
+                        //    Intent intent2 = new Intent(LoginActivity.this, CreateAccountActivity.class);
+                        //    startActivity(intent2);
                 break;
         }
     }
